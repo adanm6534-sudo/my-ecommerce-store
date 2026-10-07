@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADAN STORE - Premium Online Shopping</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f8f9fa; color: #333; }
+        
+        /* Top Announcement Bar */
+        .top-bar { background: #0f172a; color: #94a3b8; font-size: 13px; padding: 8px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
+        .top-bar span { color: #38bdf8; font-weight: 500; }
+        .top-socials { display: flex; gap: 15px; }
+        .top-socials a { color: #94a3b8; text-decoration: none; transition: 0.2s; }
+        .top-socials a:hover { color: #38bdf8; }
+
+        /* Navbar */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: #111; color: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .logo { font-size: 24px; font-weight: bold; color: #38bdf8; display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px; }
+        .search-box { position: relative; display: flex; align-items: center; }
+        .search-box input { padding: 9px 18px 9px 38px; border-radius: 25px; border: none; outline: none; width: 280px; background: #1e293b; color: #fff; font-size: 14px; transition: 0.3s; }
+        .search-box input:focus { background: #334155; width: 320px; }
+        .search-box i { position: absolute; left: 14px; color: #94a3b8; font-size: 14px; }
+        
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .cart-icon { position: relative; cursor: pointer; font-size: 22px; color: #fff; background: #1e293b; padding: 10px; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .cart-icon:hover { background: #334155; }
+        #cart-count { position: absolute; top: -5px; right: -5px; background: #e74c3c; color: #fff; border-radius: 50%; padding: 2px 7px; font-size: 11px; font-weight: bold; }
+
+        /* Category Filter Bar */
+        .category-bar { display: flex; gap: 12px; padding: 15px 5%; background: #fff; overflow-x: auto; border-bottom: 1px solid #e2e8f0; white-space: nowrap; position: sticky; top: 73px; z-index: 99; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .cat-btn { padding: 9px 22px; border: 1px solid #cbd5e1; background: #fff; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.2s; color: #475569; }
+        .cat-btn.active, .cat-btn:hover { background: #0f172a; color: #fff; border-color: #0f172a; }
+
+        /* Hero Section */
+        .hero { text-align: center; padding: 70px 20px; background: linear-gradient(135deg, #0f172a, #1e293b); color: white; position: relative; overflow: hidden; }
+        .hero h1 { margin-bottom: 10px; font-size: 38px; font-weight: 700; color: #f8fafc; }
+        .hero p { color: #94a3b8; font-size: 16px; max-width: 600px; margin: 0 auto; }
+        
+        /* Products Section */
+        .products-container { padding: 40px 5%; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .products-container h2 { font-size: 24px; color: #0f172a; font-weight: 700; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+        
+        .product-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #f1f5f9; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        .product-card img { width: 100%; height: 210px; object-fit: cover; border-radius: 8px; }
+        .product-card .cat-tag { font-size: 11px; color: #64748b; text-transform: uppercase; margin-top: 10px; font-weight: 600; letter-spacing: 0.5px; }
+        .product-card h3 { font-size: 15px; margin: 6px 0 10px; color: #1e293b; font-weight: 600; line-height: 1.4; }
+        .product-card .price-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .product-card .price { color: #16a34a; font-weight: bold; font-size: 16px; }
+        
+        .add-cart-btn { width: 100%; padding: 11px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
+        .add-cart-btn:hover { background: #1d4ed8; }
+
+        /* Cart Modal Drawer */
+        .cart-modal { position: fixed; top: 0; right: -400px; width: 380px; height: 100%; background: white; box-shadow: -5px 0 25px rgba(0,0,0,0.15); transition: 0.35s ease; z-index: 101; display: flex; flex-direction: column; }
+        .cart-modal.active { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; padding: 22px; background: #0f172a; color: white; align-items: center; }
+        .close-btn { cursor: pointer; font-size: 26px; color: #94a3b8; transition: 0.2s; }
+        .close-btn:hover { color: #fff; }
+        .cart-items { flex: 1; padding: 20px; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; font-size: 14px; }
+        .cart-footer { padding: 20px; border-top: 1px solid #e2e8f0; background: #f8f9fa; }
+        .checkout-btn { width: 100%; padding: 14px; background: #25d366; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .checkout-btn:hover { background: #20ba5a; }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; text-decoration: none; box-shadow: 0 6px 20px rgba(37,211,102,0.4); z-index: 99; transition: 0.3s; }
+        .whatsapp-float:hover { transform: scale(1.1); }
+
+        /* Professional Tagra Footer */
+        footer { background: #0b0f19; color: #cbd5e1; padding: 60px 5% 20px; margin-top: 60px; font-size: 14px; border-top: 1px solid #1e293b; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-col h3 { color: #fff; font-size: 18px; margin-bottom: 18px; font-weight: 600; }
+        .footer-col p { color: #94a3b8; line-height: 1.6; margin-bottom: 15px; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 10px; }
+        .footer-col ul li a { color: #94a3b8; text-decoration: none; transition: 0.2s; }
+        .footer-col ul li a:hover { color: #38bdf8; padding-left: 5px; }
+        .footer-contact-info li { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; color: #94a3b8; }
+        .footer-contact-info i { color: #38bdf8; }
+        
+        .footer-bottom { text-align: center; padding-top: 25px; border-top: 1px solid #1e293b; color: #64748b; font-size: 13px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .footer-bottom-links { display: flex; gap: 20px; }
+        .footer-bottom-links a { color: #64748b; text-decoration: none; }
+        .footer-bottom-links a:hover { color: #38bdf8; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Announcement Bar -->
+    <div class="top-bar">
+        <div><span>Free Express Delivery</span> on orders above Rs. 3,000 across Pakistan!</div>
+        <div class="top-socials">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo"><i class="fa-solid fa-store"></i> ADAN STORE</div>
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search 50+ products..." onkeyup="filterProducts()">
+        </div>
+        <div class="nav-right">
+            <div class="cart-icon" onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Filter Bar -->
+    <nav class="category-bar">
+        <button class="cat-btn active" onclick="selectCategory('All')">All Products</button>
+        <button class="cat-btn" onclick="selectCategory('Fragrances')">Fragrances</button>
+        <button class="cat-btn" onclick="selectCategory('Watches')">Watches</button>
+        <button class="cat-btn" onclick="selectCategory('Footwear')">Footwear</button>
+        <button class="cat-btn" onclick="selectCategory('Apparel')">Apparel</button>
+        <button class="cat-btn" onclick="selectCategory('Accessories')">Accessories</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome To Adan Store</h1>
+        <p>Explore our massive collection of premium products curated just for you. Select items, add to cart, and checkout instantly via WhatsApp.</p>
+    </section>
+
+    <!-- Product Section -->
+    <section class="products-container">
+        <div class="section-header">
+            <h2 id="section-title">All Products</h2>
+        </div>
+        <div class="product-grid" id="product-grid">
+            <!-- Dynamic Cards Rendered via JS -->
+        </div>
+    </section>
+
+    <!-- Cart Drawer Modal -->
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-header">
+            <h3>Your Shopping Cart</h3>
+            <span class="close-btn" onclick="toggleCart()">&times;</span>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p style="text-align: center; color: #777; margin-top: 30px;">Your cart is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <h4>Total: Rs. <span id="cart-total">0</span></h4>
+            <button class="checkout-btn" onclick="checkoutWhatsApp()">
+                <i class="fa-brands fa-whatsapp" style="font-size: 22px;"></i> Order via WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/923218611647" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Professional Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>ADAN STORE</h3>
+                <p>Your ultimate destination for high-end fashion, fragrances, accessories, and electronics with quick WhatsApp ordering.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#" onclick="selectCategory('All'); return false;">Home Shop</a></li>
+                    <li><a href="#" onclick="selectCategory('Fragrances'); return false;">Fragrances</a></li>
+                    <li><a href="#" onclick="selectCategory('Watches'); return false;">Watches Collection</a></li>
+                    <li><a href="#" onclick="selectCategory('Apparel'); return false;">Apparel Shirts</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Customer Care</h3>
+                <ul>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Return & Exchange</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Us</h3>
+                <ul class="footer-contact-info">
+                    <li><i class="fa-solid fa-phone"></i> 03012987765</li>
+                    <li><i class="fa-solid fa-envelope"></i> ADAN@GAMAIL.COM</li>
+                    <li><i class="fa-solid fa-location-dot"></i> Karachi, Pakistan</li>
+                    <li><i class="fa-solid fa-headset"></i> WhatsApp: +92 3218611647</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ADAN STORE. All Rights Reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript - 50+ Products Data & Logic -->
+    <script>
+        const products = [
+            // --- FRAGRANCES (12 items) ---
+            { id: 1, title: "Royal Oud Luxury Perfume", category: "Fragrances", price: 2999, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=500&q=80" },
+            { id: 2, title: "Blossom Rose Mist Spray", category: "Fragrances", price: 2499, image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=500&q=80" },
+            { id: 3, title: "Citrus Sport Cologne", category: "Fragrances", price: 3199, image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=500&q=80" },
+            { id: 4, title: "Midnight Vanilla Essence", category: "Fragrances", price: 3499, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=500&q=80" },
+            { id: 5, title: "Amber Wood Elite Perfume", category: "Fragrances", price: 4200, image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=500&q=80" },
+            { id: 6, title: "Ocean Breeze Fresh Spray", category: "Fragrances", price: 2199, image: "https://images.unsplash.com/photo-1563178406-4cdc2923acbc?auto=format&fit=crop&w=500&q=80" },
+            { id: 7, title: "Velvet Jasmine Scent", category: "Fragrances", price: 3899, image: "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=500&q=80" },
+            { id: 8, title: "Golden Musk Exclusive", category: "Fragrances", price: 4500, image: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=500&q=80" },
+            { id: 9, title: "Wild Orchid Mist", category: "Fragrances", price: 2799, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=500&q=80" },
+            { id: 10, title: "Sandalwood Noir Cologne", category: "Fragrances", price: 3999, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=500&q=80" },
+            { id: 11, title: "Emerald Fantasy Perfume", category: "Fragrances", price: 4800, image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=500&q=80" },
+            { id: 12, title: "Signature Classic Scent", category: "Fragrances", price: 3299, image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=500&q=80" },
+
+            // --- WATCHES (12 items) ---
+            { id: 13, title: "Classic Chronograph Watch", category: "Watches", price: 4500, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=500&q=80" },
+            { id: 14, title: "Smart Watch Ultra Pro", category: "Watches", price: 7499, image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=500&q=80" },
+            { id: 15, title: "Minimalist Leather Watch", category: "Watches", price: 3800, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=500&q=80" },
+            { id: 16, title: "Luxury Gold Edition Watch", category: "Watches", price: 9999, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=500&q=80" },
+            { id: 17, title: "Steel Mesh Strap Watch", category: "Watches", price: 5200, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80" },
+            { id: 18, title: "Sport Rubber Band Watch", category: "Watches", price: 4100, image: "https://images.unsplash.com/photo-1539874754764-5a96559165b0?auto=format&fit=crop&w=500&q=80" },
+            { id: 19, title: "Skeleton Automatic Watch", category: "Watches", price: 11500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=500&q=80" },
+            { id: 20, title: "Rose Gold Elegance Timepiece", category: "Watches", price: 6800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=500&q=80" },
+            { id: 21, title: "Tactical Military Watch", category: "Watches", price: 4999, image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=500&q=80" },
+            { id: 22, title: "Vintage Brown Leather Watch", category: "Watches", price: 4300, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=500&q=80" },
+            { id: 23, title: "Digital Fitness Smartwatch", category: "Watches", price: 5999, image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=500&q=80" },
+            { id: 24, title: "Diamond Bezel Luxury Watch", category: "Watches", price: 14500, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=500&q=80" },
+
+            // --- FOOTWEAR (11 items) ---
+            { id: 25, title: "Running Sports Shoes", category: "Footwear", price: 5999, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80" },
+            { id: 26, title: "Traditional Leather Khussa", category: "Footwear", price: 2800, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=500&q=80" },
+            { id: 27, title: "Formal Oxford Leather Shoes", category: "Footwear", price: 6500, image: "https://images.unsplash.com/photo-1533867617858-e7d97e060857?auto=format&fit=crop&w=500&q=80" },
+            { id: 28, title: "Casual Street Sneakers", category: "Footwear", price: 4200, image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=500&q=80" },
+            { id: 29, title: "High-Top Basketball Shoes", category: "Footwear", price: 7200, image: "https://images.unsplash.com/photo-1579338559194-a162d19bf842?auto=format&fit=crop&w=500&q=80" },
+            { id: 30, title: "Men's Formal Loafers", category: "Footwear", price: 4900, image: "https://images.unsplash.com/photo-1533867617858-e7d97e060857?auto=format&fit=crop&w=500&q=80" },
+            { id: 31, title: "Mesh Breathable Joggers", category: "Footwear", price: 5100, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80" },
+            { id: 32, title: "Designer Embroidered Khussa", category: "Footwear", price: 3490, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=500&q=80" },
+            { id: 33, title: "Classic White Sneakers", category: "Footwear", price: 3990, image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=500&q=80" },
+            { id: 34, title: "Winter Leather Boots", category: "Footwear", price: 8500, image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=500&q=80" },
+            { id: 35, title: "Slip-On Walking Shoes", category: "Footwear", price: 3600, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80" },
+
+            // --- APPAREL (11 items) ---
+            { id: 36, title: "Premium Casual Cotton Shirt", category: "Apparel", price: 2499, image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=500&q=80" },
+            { id: 37, title: "Classic Denim Jacket Blue", category: "Apparel", price: 4500, image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=500&q=80" },
+            { id: 38, title: "Slim Fit Polo Shirt", category: "Apparel", price: 1999, image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=500&q=80" },
+            { id: 39, title: "Men Cotton Kurta Shalwar", category: "Apparel", price: 4990, image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=500&q=80" },
+            { id: 40, title: "Embroidered Velvet Suit", category: "Apparel", price: 12990, image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=500&q=80" },
+            { id: 41, title: "Winter Khaddar 2-Piece", category: "Apparel", price: 6990, image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=500&q=80" },
+            { id: 42, title: "Men Embroidered Waistcoat", category: "Apparel", price: 5990, image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=500&q=80" },
+            { id: 43, title: "Chiffon Festive Lawn Suit", category: "Apparel", price: 9990, image: "https://images.unsplash.com/photo-1583391733975-f831969e6b6f?auto=format&fit=crop&w=500&q=80" },
+            { id: 44, title: "Graphic Print Hoodie", category: "Apparel", price: 3800, image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=500&q=80" },
+            { id: 45, title: "Formal Business Blazer", category: "Apparel", price: 8999, image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=500&q=80" },
+            { id: 46, title: "Casual Checkered Shirt", category: "Apparel", price: 2799, image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=500&q=80" },
+
+            // --- ACCESSORIES (11 items) ---
+            { id: 47, title: "Wireless Earbuds Pro", category: "Accessories", price: 4999, image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=500&q=80" },
+            { id: 48, title: "Genuine Leather Wallet", category: "Accessories", price: 1500, image: "https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=500&q=80" },
+            { id: 49, title: "Luxury Handcrafted Handbag", category: "Accessories", price: 6500, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80" },
+            { id: 50, title: "Aviator Sunglasses", category: "Accessories", price: 2200, image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=80" },
+            { id: 51, title: "Active Noise Cancelling Headphones", category: "Accessories", price: 8999, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80" },
+            { id: 52, title: "Minimalist Metal Card Holder", category: "Accessories", price: 1200, image: "https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=500&q=80" },
+            { id: 53, title: "Leather Crossbody Sling Bag", category: "Accessories", price: 4500, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80" },
+            { id: 54, title: "Polarized Sports Sunglasses", category: "Accessories", price: 2800, image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=80" },
+            { id: 55, title: "Bluetooth Neckband Earphones", category: "Accessories", price: 3100, image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=500&q=80" },
+            { id: 56, title: "Executive Laptop Backpack", category: "Accessories", price: 5500, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80" },
+            { id: 57, title: "Stylish Metal Keychain", category: "Accessories", price: 650, image: "https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        let cart = [];
+        let currentCategory = 'All';
+
+        function renderProducts(itemsToRender) {
+            const grid = document.getElementById('product-grid');
+            if (itemsToRender.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #777; padding: 50px; font-size: 16px;">No products found matching your search.</p>';
+                return;
+            }
+
+            grid.innerHTML = itemsToRender.map(product => `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.title}" loading="lazy">
+                    <div class="cat-tag">${product.category}</div>
+                    <h3>${product.title}</h3>
+                    <div class="price-box">
+                        <div class="price">Rs. ${product.price.toLocaleString()}</div>
+                    </div>
+                    <button class="add-cart-btn" onclick="addToCart(${product.id})">
+                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.includes(category) || (category === 'All' && btn.innerText === 'All Products'));
+            });
+            
+            document.getElementById('section-title').innerText = category === 'All' ? 'All Products Collection' : category + ' Collection';
+            filterProducts();
+        }
+
+        function filterProducts() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = products.filter(item => {
+                const matchesCategory = (currentCategory === 'All') || (item.category === currentCategory);
+                const matchesSearch = item.title.toLowerCase().includes(searchVal);
+                return matchesCategory && matchesSearch;
+            });
+
+            renderProducts(filtered);
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-modal').classList.toggle('active');
+        }
+
+        function addToCart(productId) {
+            const item = products.find(p => p.id === productId);
+            cart.push(item);
+            updateCartUI();
+            
+            // Open cart drawer automatically on add
+            document.getElementById('cart-modal').classList.add('active');
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const cartItems = document.getElementById('cart-items');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="text-align: center; color: #777; margin-top: 30px;">Your cart is empty.</p>';
+            } else {
+                cartItems.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.title}</strong><br>
+                            <small style="color:#666;">Rs. ${item.price.toLocaleString()}</small>
+                        </div>
+                        <i class="fa-solid fa-trash" style="color:#ef4444; cursor:pointer; padding: 5px;" onclick="removeFromCart(${index})"></i>
+                    </div>
+                `).join('');
+            }
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('cart-total').innerText = total.toLocaleString();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                alert("Aapka cart khali hai!");
+                return;
+            }
+            
+            let message = "Hello Adan Store, main ye items order karna chahta hoon:\n\n";
+            cart.forEach((item, i) => {
+                message += `${i + 1}. ${item.title} (${item.category}) - Rs. ${item.price.toLocaleString()}\n`;
+            });
+            
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            message += `\n*Total Amount:* Rs. ${total.toLocaleString()}`;
+
+            const whatsappNum = "923218611647";
+            const url = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+        });
+    </script>
+</body>
+</html>
